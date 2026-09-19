@@ -1,0 +1,2 @@
+import Link from "next/link";
+export default function Forbidden(){return <main className="grid min-h-screen place-items-center px-6 mesh"><div className="text-center"><p className="text-violet-300">NAGI.rip</p><h1 className="mt-3 text-6xl font-black">403</h1><p className="mt-3 text-white/50">You do not have permission to view this page.</p><Link href="/" className="mt-7 inline-block rounded-2xl bg-white px-6 py-3 font-semibold text-black">Go home</Link></div></main>}
