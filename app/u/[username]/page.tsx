@@ -1,4 +1,5 @@
 import Link from "next/link";
+// Public profile rendering is intentionally schema-aligned with social_links/links/modules.
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
