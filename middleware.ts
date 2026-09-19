@@ -1,17 +1,31 @@
+import { createServerClient } from "@supabase/ssr";
 import { NextRequest, NextResponse } from "next/server";
-import { updateSession } from "@/lib/supabase/proxy";
 
-export async function middleware(req: NextRequest) {
-  const p = req.nextUrl.pathname;
-  if (p.startsWith("/@")) {
-    const username = p.slice(2);
-    const url = req.nextUrl.clone();
-    url.pathname = "/u/" + username;
-    return NextResponse.rewrite(url);
+export async function middleware(request: NextRequest) {
+  let response = NextResponse.next({ request });
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
+    {
+      cookies: {
+        getAll: () => request.cookies.getAll(),
+        setAll: (cookiesToSet) => {
+          cookiesToSet.forEach(({name,value,options}) => {
+            request.cookies.set(name,value);
+            response.cookies.set(name,value,options);
+          });
+        },
+      },
+    }
+  );
+  await supabase.auth.getUser();
+  const pathname=request.nextUrl.pathname;
+  if(pathname.startsWith("/@")){
+    const username=pathname.slice(2);
+    const url=request.nextUrl.clone();
+    url.pathname="/u/"+username;
+    return NextResponse.rewrite(url,response);
   }
-  return updateSession(req);
+  return response;
 }
-
-export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)"],
-};
+export const config={matcher:["/((?!_next/static|_next/image|favicon.ico).*)"]};
