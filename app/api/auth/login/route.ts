@@ -1,0 +1,1 @@
+import {NextRequest,NextResponse} from "next/server";export async function POST(req:NextRequest){await req.formData();return NextResponse.json({error:"Connect Supabase Auth before enabling login."},{status:503});}
